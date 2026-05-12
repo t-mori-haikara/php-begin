@@ -10,15 +10,10 @@ use Psr\Http\Message\ServerRequestInterface;
 use Twig\Environment as View;
 
 class TopAction {
-    protected ResponseInterface $response;
-
     public function __construct(
-        ResponseFactoryInterface $responseFactory,
+        protected ResponseFactoryInterface $responseFactory,
         protected View $view
-    ) {
-        // Responseを生成
-        $this->response = $responseFactory->createResponse();
-    }
+    ) {}
 
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
@@ -31,8 +26,10 @@ class TopAction {
             'name' => $name,
         ]);
 
-        $this->response->getBody()->write($html);
+        // Responseを生成してHTMLを書き込む
+        $response = $this->responseFactory->createResponse();
+        $response->getBody()->write($html);
 
-        return $this->response;
+        return $response;
     }
 }
